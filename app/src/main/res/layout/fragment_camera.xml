@@ -1,0 +1,47 @@
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="com.desmond.customcameraapp.CameraFragment">
+
+    <com.desmond.customcameraapp.SquareCameraPreview
+        android:id="@+id/camera_preview_view"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:orientation="horizontal"
+        android:gravity="center">
+
+        <Button
+            android:id="@+id/capture_image_button"
+            android:layout_width="0"
+            android:layout_height="wrap_content"
+            android:text="@string/capture_image"
+            android:textSize="11sp"
+            android:layout_weight="1"/>
+
+        <Button
+            android:id="@+id/change_camera"
+            android:layout_width="0"
+            android:layout_height="wrap_content"
+            android:text="@string/swap_camera"
+            android:textSize="11sp"
+            android:layout_weight="1"/>
+
+        <Button
+            android:id="@+id/flash"
+            android:layout_width="0"
+            android:layout_height="wrap_content"
+            android:text="@string/no_flash"
+            android:textSize="11sp"
+            android:layout_weight="1"/>
+    </LinearLayout>
+
+</LinearLayout>
