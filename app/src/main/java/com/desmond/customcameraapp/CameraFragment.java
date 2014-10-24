@@ -1,15 +1,20 @@
 package com.desmond.customcameraapp;
 
 
+import android.app.Activity;
+import android.content.Context;
 import android.content.pm.PackageManager;
 import android.hardware.Camera;
 import android.hardware.Camera.CameraInfo;
 import android.hardware.Camera.Size;
+import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.OrientationEventListener;
 import android.view.Surface;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
@@ -24,19 +29,24 @@ import java.util.List;
 /**
  *
  */
-public class CameraFragment extends Fragment implements SurfaceHolder.Callback {
+public class CameraFragment extends Fragment implements SurfaceHolder.Callback, Camera.PictureCallback {
 
     public static final String TAG = CameraFragment.class.getSimpleName();
     public static final String CAMERA_ID_KEY = "camera_id";
-
-    private static final Object mLock = new Object();
+    public static final String CAMERA_FLASH_KEY = "flash_mode";
 
     private static final int PICTURE_SIZE_MAX_WIDTH = 1280;
     private static final int PREVIEW_SIZE_MAX_WIDTH = 640;
 
     private int mCameraID;
+    private String mFlashMode;
     private Camera mCamera;
     private SurfaceHolder mSurfaceHolder;
+
+    private int mDisplayOrientation;
+    private int mLayoutOrientation;
+
+    private CameraOrientationListener mOrientationListener;
 
     public static Fragment newInstance() {
         Fragment fragment = new CameraFragment();
@@ -44,6 +54,13 @@ public class CameraFragment extends Fragment implements SurfaceHolder.Callback {
     }
 
     public CameraFragment() {}
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+
+        mOrientationListener = new CameraOrientationListener(activity);
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -56,14 +73,18 @@ public class CameraFragment extends Fragment implements SurfaceHolder.Callback {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        mOrientationListener.enable();
+
         SurfaceView previewView = (SquareCameraPreview) view.findViewById(R.id.camera_preview_view);
         previewView.getHolder().addCallback(this);
 
         if (savedInstanceState == null) {
             mCameraID = getBackCameraID();
+            mFlashMode = Camera.Parameters.FLASH_MODE_AUTO;
         }
         else {
             mCameraID = savedInstanceState.getInt(CAMERA_ID_KEY);
+            mFlashMode = savedInstanceState.getString(CAMERA_FLASH_KEY);
         }
 
         mCamera = getCamera(mCameraID);
@@ -81,11 +102,41 @@ public class CameraFragment extends Fragment implements SurfaceHolder.Callback {
                 restartPreview();
             }
         });
+
+        final Button changeCameraFlashModeBtn = (Button) view.findViewById(R.id.flash);
+        changeCameraFlashModeBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mFlashMode.equalsIgnoreCase(Camera.Parameters.FLASH_MODE_AUTO)) {
+                    mFlashMode = Camera.Parameters.FLASH_MODE_ON;
+                    changeCameraFlashModeBtn.setText(getString(R.string.flash));
+                }
+                else if (mFlashMode.equalsIgnoreCase(Camera.Parameters.FLASH_MODE_ON)) {
+                    mFlashMode = Camera.Parameters.FLASH_MODE_OFF;
+                    changeCameraFlashModeBtn.setText(getString(R.string.no_flash));
+                }
+                else if (mFlashMode.equalsIgnoreCase(Camera.Parameters.FLASH_MODE_OFF)) {
+                    mFlashMode = Camera.Parameters.FLASH_MODE_AUTO;
+                    changeCameraFlashModeBtn.setText(getString(R.string.auto_flash));
+                }
+
+                setupCamera();
+            }
+        });
+
+        Button takePhotoBtn = (Button) view.findViewById(R.id.capture_image_button);
+        takePhotoBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                takePicture();
+            }
+        });
     }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
         outState.putInt(CAMERA_ID_KEY, mCameraID);
+        outState.putString(CAMERA_FLASH_KEY, mFlashMode);
         super.onSaveInstanceState(outState);
     }
 
@@ -104,17 +155,15 @@ public class CameraFragment extends Fragment implements SurfaceHolder.Callback {
      * Start the camera preview
      */
     private void startCameraPreview() {
-        synchronized (mLock) {
-            determineDisplayOrientation();
-            setupCamera();
+        determineDisplayOrientation();
+        setupCamera();
 
-            try {
-                mCamera.setPreviewDisplay(mSurfaceHolder);
-                mCamera.startPreview();
-            } catch (IOException e) {
-                Log.d(TAG, "Can't start camera preview due to IOException " + e);
-                e.printStackTrace();
-            }
+        try {
+            mCamera.setPreviewDisplay(mSurfaceHolder);
+            mCamera.startPreview();
+        } catch (IOException e) {
+            Log.d(TAG, "Can't start camera preview due to IOException " + e);
+            e.printStackTrace();
         }
     }
 
@@ -122,10 +171,8 @@ public class CameraFragment extends Fragment implements SurfaceHolder.Callback {
      * Stop the camera preview
      */
     private void stopCameraPreview() {
-        synchronized (mLock) {
-            // Nulls out callbacks, stops face detection
-            mCamera.stopPreview();
-        }
+        // Nulls out callbacks, stops face detection
+        mCamera.stopPreview();
     }
 
     /**
@@ -172,6 +219,9 @@ public class CameraFragment extends Fragment implements SurfaceHolder.Callback {
             displayOrientation = (cameraInfo.orientation - degrees + 360) % 360;
         }
 
+        mDisplayOrientation = displayOrientation;
+        mLayoutOrientation = degrees;
+        
         mCamera.setDisplayOrientation(displayOrientation);
     }
 
@@ -187,6 +237,13 @@ public class CameraFragment extends Fragment implements SurfaceHolder.Callback {
 
         parameters.setPreviewSize(bestPreviewSize.width, bestPreviewSize.height);
         parameters.setPictureSize(bestPictureSize.width, bestPictureSize.height);
+
+        // Set continuous picture focus, if it's supported
+        if (parameters.getSupportedFocusModes().contains(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE)) {
+            parameters.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE);
+        }
+
+        parameters.setFlashMode(mFlashMode);
 
         // Lock in the changes
         mCamera.setParameters(parameters);
@@ -246,12 +303,36 @@ public class CameraFragment extends Fragment implements SurfaceHolder.Callback {
         return CameraInfo.CAMERA_FACING_BACK;
     }
 
+    /**
+     * Take a picture
+     */
+    private void takePicture() {
+        mOrientationListener.rememberOrientation();
+
+        // Shutter callback occurs after the image is captured. This can
+        // be used to trigger a sound to let the user know that image is taken
+        Camera.ShutterCallback shutterCallback = null;
+
+        // Raw callback occurs when the raw image data is available
+        Camera.PictureCallback raw = null;
+
+        // postView callback occurs when a scaled, fully processed
+        // postView image is available.
+        Camera.PictureCallback postView = null;
+
+        // jpeg callback occurs when the compressed image is available
+
+        mCamera.takePicture(shutterCallback, raw, postView, this);
+    }
+
     @Override
     public void onPause() {
-        stopCameraPreview();
+        mOrientationListener.disable();
 
         // stop the preview
+        stopCameraPreview();
         mCamera.release();
+
         super.onPause();
     }
 
@@ -272,5 +353,72 @@ public class CameraFragment extends Fragment implements SurfaceHolder.Callback {
     @Override
     public void surfaceDestroyed(SurfaceHolder holder) {
         // The surface is destroyed with the visibility of the SurfaceView is set to View.Invisible
+    }
+
+    /**
+     * A picture has been taken
+     * @param data
+     * @param camera
+     */
+    @Override
+    public void onPictureTaken(byte[] data, Camera camera) {
+        int rotation = (
+                mDisplayOrientation
+                        + mOrientationListener.getRememberedNormalOrientation()
+                        + mLayoutOrientation
+        ) % 360;
+
+        FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
+        ft.replace(R.id.fragment_container, EditSavePhotoFragment.newInstance(data, rotation));
+        ft.addToBackStack(null);
+        ft.commit();
+    }
+
+    /**
+     * When orientation changes, onOrientationChanged(int) of the listener will be called
+     */
+    private static class CameraOrientationListener extends OrientationEventListener {
+
+        private int mCurrentNormalizedOrientation;
+        private int mRememberedNormalOrientation;
+
+        public CameraOrientationListener(Context context) {
+            super(context, SensorManager.SENSOR_DELAY_NORMAL);
+        }
+
+        @Override
+        public void onOrientationChanged(int orientation) {
+            if (orientation != ORIENTATION_UNKNOWN) {
+                mCurrentNormalizedOrientation = normalize(orientation);
+            }
+        }
+
+        private int normalize(int degrees) {
+            if (degrees > 315 || degrees <= 45) {
+                return 0;
+            }
+
+            if (degrees > 45 && degrees <= 135) {
+                return 90;
+            }
+
+            if (degrees > 135 && degrees <= 225) {
+                return 180;
+            }
+
+            if (degrees > 225 && degrees <= 315) {
+                return 270;
+            }
+
+            throw new RuntimeException("The physics as we know them are no more. Watch out for anomalies.");
+        }
+
+        public void rememberOrientation() {
+            mRememberedNormalOrientation = mCurrentNormalizedOrientation;
+        }
+
+        public int getRememberedNormalOrientation() {
+            return mRememberedNormalOrientation;
+        }
     }
 }
