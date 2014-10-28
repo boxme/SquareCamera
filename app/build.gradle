@@ -1,12 +1,20 @@
 apply plugin: 'com.android.application'
 
+repositories {
+    mavenCentral()
+    maven {
+        name 'maven.aviary.com'
+        url uri("http://maven.aviary.com/repo/release")
+    }
+}
+
 android {
     compileSdkVersion 21
     buildToolsVersion "21.0.1"
 
     defaultConfig {
         applicationId "com.desmond.customcameraapp"
-        minSdkVersion 11
+        minSdkVersion 10
         targetSdkVersion 21
         versionCode 1
         versionName "1.0"
@@ -17,9 +25,15 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+
+    packagingOptions {
+        exclude 'META-INF/NOTICE.txt'
+        exclude 'META-INF/LICENSE.txt'
+    }
 }
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     compile 'com.android.support:appcompat-v7:21.0.0'
+    compile 'com.aviary.android.feather.sdk:aviary-sdk:3.4.3.351'
 }
