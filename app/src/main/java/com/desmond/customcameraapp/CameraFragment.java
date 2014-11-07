@@ -24,7 +24,8 @@ import android.view.SurfaceView;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
-import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.aviary.android.feather.library.Constants;
 import com.aviary.android.feather.sdk.FeatherActivity;
@@ -99,7 +100,7 @@ public class CameraFragment extends Fragment implements SurfaceHolder.Callback, 
         mOrientationListener.enable();
 
         final SurfaceView previewView = (SquareCameraPreview) view.findViewById(R.id.camera_preview_view);
-        previewView.getHolder().addCallback(this);
+        previewView.getHolder().addCallback(CameraFragment.this);
 
         final View topCoverView = getView().findViewById(R.id.cover_top_view);
         final View btnCoverView = getView().findViewById(R.id.cover_bottom_view);
@@ -130,7 +131,7 @@ public class CameraFragment extends Fragment implements SurfaceHolder.Callback, 
             btnCoverView.getLayoutParams().height = mCoverHeight;
         }
 
-        Button swapCameraBtn = (Button) view.findViewById(R.id.change_camera);
+        final ImageView swapCameraBtn = (ImageView) view.findViewById(R.id.change_camera);
         swapCameraBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -144,28 +145,29 @@ public class CameraFragment extends Fragment implements SurfaceHolder.Callback, 
             }
         });
 
-        final Button changeCameraFlashModeBtn = (Button) view.findViewById(R.id.flash);
+        final View changeCameraFlashModeBtn = view.findViewById(R.id.flash);
+        final TextView autoFlashIcon = (TextView) view.findViewById(R.id.auto_flash_icon);
         changeCameraFlashModeBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (mFlashMode.equalsIgnoreCase(Camera.Parameters.FLASH_MODE_AUTO)) {
                     mFlashMode = Camera.Parameters.FLASH_MODE_ON;
-                    changeCameraFlashModeBtn.setText(getString(R.string.flash));
+                    autoFlashIcon.setText("On");
                 }
                 else if (mFlashMode.equalsIgnoreCase(Camera.Parameters.FLASH_MODE_ON)) {
                     mFlashMode = Camera.Parameters.FLASH_MODE_OFF;
-                    changeCameraFlashModeBtn.setText(getString(R.string.no_flash));
+                    autoFlashIcon.setText("Off");
                 }
                 else if (mFlashMode.equalsIgnoreCase(Camera.Parameters.FLASH_MODE_OFF)) {
                     mFlashMode = Camera.Parameters.FLASH_MODE_AUTO;
-                    changeCameraFlashModeBtn.setText(getString(R.string.auto_flash));
+                    autoFlashIcon.setText("Auto");
                 }
 
                 setupCamera();
             }
         });
 
-        Button takePhotoBtn = (Button) view.findViewById(R.id.capture_image_button);
+        final ImageView takePhotoBtn = (ImageView) view.findViewById(R.id.capture_image_button);
         takePhotoBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -251,7 +253,7 @@ public class CameraFragment extends Fragment implements SurfaceHolder.Callback, 
 
         // Camera direction
         if (cameraInfo.facing == CameraInfo.CAMERA_FACING_FRONT) {
-            // orientation is angle of rotation when facing the camera for
+            // Orientation is angle of rotation when facing the camera for
             // the camera image to match the natural orientation of the device
             displayOrientation = (cameraInfo.orientation + degrees) % 360;
             displayOrientation = (360 - displayOrientation) % 360;
@@ -285,13 +287,13 @@ public class CameraFragment extends Fragment implements SurfaceHolder.Callback, 
             parameters.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE);
         }
 
-        final Button changeCameraFlashModeBtn = (Button) getView().findViewById(R.id.flash);
+        final View changeCameraFlashModeBtn = getView().findViewById(R.id.flash);
         if (parameters.getSupportedFlashModes().contains(mFlashMode)) {
             parameters.setFlashMode(mFlashMode);
             changeCameraFlashModeBtn.setVisibility(View.VISIBLE);
         }
         else {
-            changeCameraFlashModeBtn.setVisibility(View.GONE);
+            changeCameraFlashModeBtn.setVisibility(View.INVISIBLE);
         }
 
         // Lock in the changes
@@ -316,7 +318,6 @@ public class CameraFragment extends Fragment implements SurfaceHolder.Callback, 
         for (Size size : sizes) {
             boolean isDesireRatio = (size.width / 4) == (size.height / 3);
             boolean isBetterSize = (bestSize == null) || size.width > bestSize.width;
-            boolean isInBounds = size.width <= widthThreshold;
 
             if (isDesireRatio && isBetterSize) {
                 bestSize = size;
@@ -376,8 +377,6 @@ public class CameraFragment extends Fragment implements SurfaceHolder.Callback, 
 
     @Override
     public void onStop() {
-        Log.d(TAG, "on stop");
-
         mOrientationListener.disable();
 
         // stop the preview

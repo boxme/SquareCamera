@@ -2,20 +2,89 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.desmond.customcameraapp" >
 
+    <!-- Request permission to use a device camera -->
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-feature android:name="android.hardware.camera2" />
+
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+
+    <uses-permission android:name="android.permission.INTERNET" />
+
+    <uses-permission android:name="android.permission.VIBRATE" />
+
     <application
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
-            android:name="com.desmond.customcameraapp.MainActivity"
-            android:label="@string/app_name" >
+            android:name=".CameraActivity"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <!-- Main Editor Activity -->
+        <activity android:name="com.aviary.android.feather.sdk.FeatherActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:screenOrientation="unspecified"
+            android:hardwareAccelerated="true"
+            android:largeHeap="true"
+            android:process=":aviarysdk"
+            android:theme="@style/AviaryTheme" />
+
+        <!-- Alert -->
+        <activity
+            android:name="com.aviary.android.feather.sdk.AlertActivity"
+            android:launchMode="standard"
+            android:noHistory="true"
+            android:theme="@style/AviaryTheme.Dialog">
+            <intent-filter>
+                <action android:name="aviary.intent.action.ALERT"/>
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+
+        <!-- CDS Content Service -->
+        <service
+            android:process=":aviarycds"
+            android:name="com.aviary.android.feather.cds.AviaryCdsService"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="aviary.intent.action.CDS_DOWNLOAD_START"/>
+                <action android:name="aviary.intent.action.CDS_RESTORE_USER_ITEMS"/>
+            </intent-filter>
+        </service>
+
+        <!--
+            Cds Content Provider,
+            NOTE that the "authorities" value MUST be formatted in this way:
+            android:authorities="{your.packagename}.AviaryCdsProvider"
+         -->
+        <provider
+            android:name="com.aviary.android.feather.cds.AviaryCdsProvider"
+            android:authorities="com.desmond.customcameraapp.AviaryCdsProvider"
+            android:process=":aviarycds"
+            android:exported="false"
+            android:syncable="true" />
+
+        <!-- CDS Download Receiver -->
+        <receiver
+            android:name="com.aviary.android.feather.cds.AviaryCdsReceiver"
+            android:process=":aviarycds" >
+            <intent-filter>
+                <action android:name="android.intent.action.DOWNLOAD_COMPLETE" />
+            </intent-filter>
+        </receiver>
+
+        <meta-data
+            android:name="com.aviary.android.feather.v1.API_KEY"
+            android:value="16c9f4560eff175a"/>
     </application>
 
 </manifest>

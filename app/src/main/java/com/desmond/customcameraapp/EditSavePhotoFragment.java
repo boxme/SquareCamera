@@ -2,10 +2,10 @@ package com.desmond.customcameraapp;
 
 
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.graphics.drawable.BitmapDrawable;
 import android.media.MediaScannerConnection;
+import android.media.ThumbnailUtils;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -35,7 +35,7 @@ public class EditSavePhotoFragment extends Fragment {
     public static final String BITMAP_KEY = "bitmap_byte_array";
     public static final String ROTATION_KEY = "rotation";
     public static final String COVER_HEIGHT_KEY = "cover_height";
-    public static final String IMAGE_HEIGHT_KEY = "image_heigh";
+    public static final String IMAGE_HEIGHT_KEY = "image_height";
 
     public static Fragment newInstance(byte[] bitmapByteArray, int rotation,
                                        int coverHeight, int imageViewHeight) {
@@ -89,8 +89,7 @@ public class EditSavePhotoFragment extends Fragment {
     }
 
     private void rotatePicture(int rotation, byte[] data, ImageView photoImageView) {
-        BitmapFactory.Options options = new BitmapFactory.Options();
-        Bitmap bitmap = BitmapFactory.decodeByteArray(data, 0, data.length, options);
+        Bitmap bitmap = ImageUtility.decodeSampledBitmapFromByte(getActivity(), data);
 
         Log.d(TAG, "original bitmap width " + bitmap.getWidth() + " height " + bitmap.getHeight());
 
@@ -114,20 +113,12 @@ public class EditSavePhotoFragment extends Fragment {
         ImageView photoImageView = (ImageView) getView().findViewById(R.id.photo);
 
         Bitmap bitmap = ((BitmapDrawable) photoImageView.getDrawable()).getBitmap();
-        Bitmap oldBitmap = bitmap;
 
-        int startX, cropHeight;
-        if (bitmap.getHeight() > bitmap.getWidth()) {
-            startX = (bitmap.getHeight() - bitmap.getWidth()) / 2;
-            cropHeight = bitmap.getWidth();
-        }
-        else {
-            startX = (bitmap.getWidth() - bitmap.getWidth()) / 2;
-            cropHeight = bitmap.getHeight();
-        }
-        bitmap = Bitmap.createBitmap(
-                oldBitmap, 0, startX, oldBitmap.getWidth(), cropHeight
-        );
+        int cropHeight;
+        if (bitmap.getHeight() > bitmap.getWidth()) cropHeight = bitmap.getWidth();
+        else                                        cropHeight = bitmap.getHeight();
+
+        bitmap = ThumbnailUtils.extractThumbnail(bitmap, cropHeight, cropHeight, ThumbnailUtils.OPTIONS_RECYCLE_INPUT);
 
         File mediaStorageDir = new File(
                 Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),
