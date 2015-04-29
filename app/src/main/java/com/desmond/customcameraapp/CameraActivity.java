@@ -3,25 +3,24 @@ package com.desmond.customcameraapp;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 
 
-public class CameraActivity extends ActionBarActivity {
+public class CameraActivity extends AppCompatActivity {
+
+    public static final String TAG = CameraActivity.class.getSimpleName();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        getSupportActionBar().hide();
         setContentView(R.layout.activity_main);
 
         if (savedInstanceState == null) {
-            FragmentManager fm = getSupportFragmentManager();
-            FragmentTransaction ft = fm.beginTransaction();
-            ft.replace(R.id.fragment_container, CameraFragment.newInstance());
-            ft.commit();
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.fragment_container, CameraFragment.newInstance())
+                    .commit();
         }
     }
 
@@ -31,8 +30,7 @@ public class CameraActivity extends ActionBarActivity {
 
         if (getParent() == null) {
             setResult(RESULT_OK, data);
-        }
-        else {
+        } else {
             getParent().setResult(RESULT_OK, data);
         }
 

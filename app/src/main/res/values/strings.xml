@@ -15,5 +15,6 @@
     <string name="capturing_image">Taking New Picture</string>
     <string name="done">Done</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="title_activity_blank">BlankActivity</string>
 
 </resources>

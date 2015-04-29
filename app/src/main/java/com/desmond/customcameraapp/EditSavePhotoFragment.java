@@ -154,6 +154,6 @@ public class EditSavePhotoFragment extends Fragment {
         MediaScannerConnection.scanFile(getActivity(), new String[]{mediaFile.toString()}, new String[]{"image/jpeg"}, null);
 
         // Return the Uri
-                ((CameraActivity) getActivity()).returnPhotoUri(Uri.fromFile(mediaFile));
+        ((CameraActivity) getActivity()).returnPhotoUri(Uri.fromFile(mediaFile));
     }
 }
