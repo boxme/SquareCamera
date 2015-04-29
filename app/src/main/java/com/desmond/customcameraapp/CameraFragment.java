@@ -27,9 +27,6 @@ import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.aviary.android.feather.library.Constants;
-import com.aviary.android.feather.sdk.FeatherActivity;
-
 import java.io.IOException;
 import java.util.List;
 
@@ -433,10 +430,10 @@ public class CameraFragment extends Fragment implements SurfaceHolder.Callback, 
         Bitmap bitmap = ImageUtility.rotatePicture(getActivity(), rotation, data);
         Uri uri = ImageUtility.savePicture(getActivity(), bitmap);
 
-        Intent newIntent = new Intent(getActivity(), FeatherActivity.class);
-        newIntent.setData(uri);
-        newIntent.putExtra(Constants.EXTRA_IN_API_KEY_SECRET, API_SECRET_KEY);
-        startActivityForResult(newIntent, 1);
+//        Intent newIntent = new Intent(getActivity(), FeatherActivity.class);
+//        newIntent.setData(uri);
+//        newIntent.putExtra(Constants.EXTRA_IN_API_KEY_SECRET, API_SECRET_KEY);
+//        startActivityForResult(newIntent, 1);
 
 //        FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
 //        ft.replace(R.id.fragment_container, EditSavePhotoFragment.newInstance(data, rotation, mCoverHeight, mPreviewHeight));
