@@ -1,4 +1,4 @@
-package com.desmond.customcameraapp;
+package com.desmond.squarecamera;
 
 
 import android.graphics.Bitmap;
@@ -17,6 +17,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+
+import com.desmond.customcameraapp.R;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;

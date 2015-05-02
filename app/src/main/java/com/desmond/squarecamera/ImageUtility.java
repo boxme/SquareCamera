@@ -1,4 +1,4 @@
-package com.desmond.customcameraapp;
+package com.desmond.squarecamera;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -13,6 +13,8 @@ import android.os.Environment;
 import android.util.Base64;
 import android.view.Display;
 import android.view.WindowManager;
+
+import com.desmond.customcameraapp.R;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;

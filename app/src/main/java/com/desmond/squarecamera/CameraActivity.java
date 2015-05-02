@@ -1,4 +1,4 @@
-package com.desmond.customcameraapp;
+package com.desmond.squarecamera;
 
 import android.content.Intent;
 import android.net.Uri;
@@ -7,6 +7,8 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.view.WindowManager;
+
+import com.desmond.customcameraapp.R;
 
 
 public class CameraActivity extends AppCompatActivity {

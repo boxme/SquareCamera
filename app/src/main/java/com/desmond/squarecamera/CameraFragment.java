@@ -1,4 +1,4 @@
-package com.desmond.customcameraapp;
+package com.desmond.squarecamera;
 
 
 import android.app.Activity;
@@ -24,6 +24,8 @@ import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.desmond.customcameraapp.R;
 
 import java.io.IOException;
 import java.util.List;

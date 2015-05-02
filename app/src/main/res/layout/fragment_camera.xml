@@ -4,9 +4,9 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@android:color/black"
-    tools:context="com.desmond.customcameraapp.CameraFragment">
+    tools:context="com.desmond.squarecamera.CameraFragment">
 
-    <com.desmond.customcameraapp.SquareCameraPreview
+    <com.desmond.squarecamera.SquareCameraPreview
         android:id="@+id/camera_preview_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>

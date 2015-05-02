@@ -1,4 +1,4 @@
-package com.desmond.customcameraapp;
+package com.desmond.squarecamera;
 
 import android.content.Context;
 import android.graphics.Rect;

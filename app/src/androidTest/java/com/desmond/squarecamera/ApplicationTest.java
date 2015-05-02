@@ -1,4 +1,4 @@
-package com.desmond.customcameraapp;
+package com.desmond.squarecamera;
 
 import android.app.Application;
 import android.test.ApplicationTestCase;
