@@ -15,7 +15,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageView;
 
 import java.io.ByteArrayOutputStream;
@@ -78,8 +77,7 @@ public class EditSavePhotoFragment extends Fragment {
 
         rotatePicture(rotation, data, photoImageView);
 
-        Button savePictureBtn = (Button) view.findViewById(R.id.save_photo);
-        savePictureBtn.setOnClickListener(new View.OnClickListener() {
+        view.findViewById(R.id.save_photo).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 savePicture();

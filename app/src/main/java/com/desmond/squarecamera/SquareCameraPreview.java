@@ -19,6 +19,7 @@ public class SquareCameraPreview extends SurfaceView {
 
     public static final String TAG = SquareCameraPreview.class.getSimpleName();
     private static final int INVALID_POINTER_ID = -1;
+    private static final int ZOOM_DELTA = 1;
     private static final int FOCUS_SQR_SIZE = 100;
     private static final int FOCUS_MAX_BOUND = 1000;
     private static final int FOCUS_MIN_BOUND = -FOCUS_MAX_BOUND;
@@ -142,9 +143,9 @@ public class SquareCameraPreview extends SurfaceView {
 
         int zoom = params.getZoom();
         if (mScaleFactor > 1.0f) {
-            if (zoom < mMaxZoom) ++zoom;
+            if (zoom < mMaxZoom) zoom += ZOOM_DELTA;
         } else if (mScaleFactor < 1.0f) {
-            if (zoom > 0) --zoom;
+            if (zoom > 0) zoom -= ZOOM_DELTA;
         }
         params.setZoom(zoom);
         mCamera.setParameters(params);

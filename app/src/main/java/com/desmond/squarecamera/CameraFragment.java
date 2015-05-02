@@ -283,15 +283,11 @@ public class CameraFragment extends Fragment implements SurfaceHolder.Callback, 
     }
 
     private Size determineBestPreviewSize(Camera.Parameters parameters) {
-        List<Size> sizes = parameters.getSupportedPreviewSizes();
-
-        return determineBestSize(sizes, PREVIEW_SIZE_MAX_WIDTH);
+        return determineBestSize(parameters.getSupportedPreviewSizes(), PREVIEW_SIZE_MAX_WIDTH);
     }
 
     private Size determineBestPictureSize(Camera.Parameters parameters) {
-        List<Size> sizes = parameters.getSupportedPictureSizes();
-
-        return determineBestSize(sizes, PICTURE_SIZE_MAX_WIDTH);
+        return determineBestSize(parameters.getSupportedPictureSizes(), PICTURE_SIZE_MAX_WIDTH);
     }
 
     private Size determineBestSize(List<Size> sizes, int widthThreshold) {

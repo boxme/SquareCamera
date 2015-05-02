@@ -27,6 +27,7 @@ public class CameraActivity extends AppCompatActivity {
             decorView.setSystemUiVisibility(uiOptions);
         }
 
+        getWindow().setBackgroundDrawable(null);
         setContentView(R.layout.activity_main);
 
         if (savedInstanceState == null) {
@@ -48,5 +49,9 @@ public class CameraActivity extends AppCompatActivity {
         }
 
         finish();
+    }
+
+    public void onCancel(View view) {
+        getSupportFragmentManager().popBackStack();
     }
 }
