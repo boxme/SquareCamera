@@ -3,9 +3,11 @@ package com.desmond.customcameraapp;
 import android.content.Context;
 import android.hardware.Camera;
 import android.util.AttributeSet;
-import android.util.FloatMath;
 import android.view.MotionEvent;
+import android.view.ScaleGestureDetector;
 import android.view.SurfaceView;
+
+import java.util.List;
 
 /**
  *
@@ -13,21 +15,40 @@ import android.view.SurfaceView;
 public class SquareCameraPreview extends SurfaceView {
 
     public static final String TAG = SquareCameraPreview.class.getSimpleName();
+    private static final int INVALID_POINTER_ID = -1;
 
     private static final double ASPECT_RATIO = 3.0 / 4.0;
-    private float mDist;
     private Camera mCamera;
+
+    private float mLastTouchX;
+    private float mLastTouchY;
+
+    // For scaling
+    private int mMaxZoom;
+    private boolean mIsZoomSupported;
+    private int mActivePointerId = INVALID_POINTER_ID;
+    private float mScaleFactor = 1.0f;
+    private float mFocusX;
+    private float mFocusY;
+    private ScaleGestureDetector mScaleDetector;
 
     public SquareCameraPreview(Context context) {
         super(context);
+        init(context);
     }
 
     public SquareCameraPreview(Context context, AttributeSet attrs) {
         super(context, attrs);
+        init(context);
     }
 
     public SquareCameraPreview(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
+        init(context);
+    }
+
+    private void init(Context context) {
+        mScaleDetector = new ScaleGestureDetector(context, new ScaleListener());
     }
 
     /**
@@ -59,85 +80,88 @@ public class SquareCameraPreview extends SurfaceView {
 
     public void setCamera(Camera camera) {
         mCamera = camera;
-    }
 
-//    @Override
-//    public boolean onTouchEvent(MotionEvent event) {
-//        final int action = event.getAction();
-//        switch (action & MotionEvent.ACTION_MASK) {
-//            case MotionEvent.ACTION_POINTER_DOWN: {
-//
-//            }
-//        }
-//
-//        return super.onTouchEvent(event);
-//    }
+        if (camera != null) {
+            Camera.Parameters params = camera.getParameters();
+            mIsZoomSupported = params.isZoomSupported();
+            if (mIsZoomSupported) {
+                mMaxZoom = params.getMaxZoom();
+            }
+        }
+    }
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        // Get the pointer ID
-        Camera.Parameters params = mCamera.getParameters();
-        int action = event.getAction();
+        mScaleDetector.onTouchEvent(event);
 
+        final int action = event.getAction();
+        switch (action & MotionEvent.ACTION_MASK) {
+            case MotionEvent.ACTION_DOWN: {
+                mLastTouchX = event.getX();
+                mLastTouchY = event.getY();
 
-        if (event.getPointerCount() > 1) {
-            // handle multi-touch events
-            if (action == MotionEvent.ACTION_POINTER_DOWN) {
-                mDist = getFingerSpacing(event);
-            } else if (action == MotionEvent.ACTION_MOVE && params.isZoomSupported()) {
-                mCamera.cancelAutoFocus();
-                handleZoom(event, params);
+                // Save the Id of this pointer
+                mActivePointerId = event.getPointerId(0);
+                break;
             }
-        } else {
-            // handle single touch events
-            if (action == MotionEvent.ACTION_UP) {
-                handleFocus(event, params);
+            case MotionEvent.ACTION_UP: {
+//                handleFocus(mCamera.getParameters());
+                mActivePointerId = INVALID_POINTER_ID;
+                break;
+            }
+            case MotionEvent.ACTION_POINTER_DOWN: {
+                break;
+            }
+            case MotionEvent.ACTION_CANCEL: {
+                mActivePointerId = INVALID_POINTER_ID;
+                break;
             }
         }
+
         return true;
     }
 
-    private void handleZoom(MotionEvent event, Camera.Parameters params) {
-        int maxZoom = params.getMaxZoom();
+    private void handleZoom(Camera.Parameters params) {
         int zoom = params.getZoom();
-        float newDist = getFingerSpacing(event);
-        if (newDist > mDist) {
-            //zoom in
-            if (zoom < maxZoom)
-                zoom++;
-        } else if (newDist < mDist) {
-            //zoom out
-            if (zoom > 0)
-                zoom--;
+        if (mScaleFactor > 1.0f) {
+            if (zoom < mMaxZoom) ++zoom;
+        } else if (mScaleFactor < 1.0f) {
+            if (zoom > 0) --zoom;
         }
-        mDist = newDist;
         params.setZoom(zoom);
         mCamera.setParameters(params);
     }
 
-    public void handleFocus(MotionEvent event, Camera.Parameters params) {
-//        int pointerId = event.getPointerId(0);
-//        int pointerIndex = event.findPointerIndex(pointerId);
-//        // Get the pointer's current position
-//        float x = event.getX(pointerIndex);
-//        float y = event.getY(pointerIndex);
-//
-//        List<String> supportedFocusModes = params.getSupportedFocusModes();
-//        if (supportedFocusModes != null && supportedFocusModes.contains(Camera.Parameters.FOCUS_MODE_AUTO)) {
-//            mCamera.autoFocus(new Camera.AutoFocusCallback() {
-//                @Override
-//                public void onAutoFocus(boolean b, Camera camera) {
-//                    // currently set to auto-focus on single touch
-//                }
-//            });
-//        }
+    private void handleFocus(Camera.Parameters params) {
+        float x = mLastTouchX;
+        float y = mLastTouchY;
+
+//        Rect focusRect = new Rect();
+//        focusRect.inset();
+//        Camera.Area focusArea = new Camera.Area();
+        List<String> supportedFocusModes = params.getSupportedFocusModes();
+        if (supportedFocusModes != null
+                && supportedFocusModes.contains(Camera.Parameters.FLASH_MODE_AUTO)) {
+            mCamera.autoFocus(new Camera.AutoFocusCallback() {
+                @Override
+                public void onAutoFocus(boolean success, Camera camera) {
+                    // Callback when the auto focus completes
+                }
+            });
+        }
     }
 
-    /** Determine the space between the first two fingers */
-    private float getFingerSpacing(MotionEvent event) {
-        // ...
-        float x = event.getX(0) - event.getX(1);
-        float y = event.getY(0) - event.getY(1);
-        return FloatMath.sqrt(x * x + y * y);
+    private class ScaleListener extends ScaleGestureDetector.SimpleOnScaleGestureListener {
+
+        @Override
+        public boolean onScale(ScaleGestureDetector detector) {
+            mScaleFactor = detector.getScaleFactor();
+            handleZoom(mCamera.getParameters());
+            if (detector.isInProgress()) {
+                mFocusX = detector.getFocusX();
+                mFocusY = detector.getFocusY();
+            }
+            return true;
+        }
     }
 }
