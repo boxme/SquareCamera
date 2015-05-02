@@ -26,9 +26,9 @@ public class CameraActivity extends AppCompatActivity {
             int uiOptions = View.SYSTEM_UI_FLAG_FULLSCREEN;
             decorView.setSystemUiVisibility(uiOptions);
         }
-
+        getSupportActionBar().hide();
         getWindow().setBackgroundDrawable(null);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_camera);
 
         if (savedInstanceState == null) {
             getSupportFragmentManager()

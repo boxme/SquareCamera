@@ -4,11 +4,8 @@ package com.desmond.squarecamera;
 import android.graphics.Bitmap;
 import android.graphics.Matrix;
 import android.graphics.drawable.BitmapDrawable;
-import android.media.MediaScannerConnection;
-import android.media.ThumbnailUtils;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -16,13 +13,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
 
 /**
@@ -110,47 +100,8 @@ public class EditSavePhotoFragment extends Fragment {
         ImageView photoImageView = (ImageView) getView().findViewById(R.id.photo);
 
         Bitmap bitmap = ((BitmapDrawable) photoImageView.getDrawable()).getBitmap();
+        Uri photoUri = ImageUtility.savePicture(getActivity(), bitmap);
 
-        int cropHeight;
-        if (bitmap.getHeight() > bitmap.getWidth()) cropHeight = bitmap.getWidth();
-        else                                        cropHeight = bitmap.getHeight();
-
-        bitmap = ThumbnailUtils.extractThumbnail(bitmap, cropHeight, cropHeight, ThumbnailUtils.OPTIONS_RECYCLE_INPUT);
-
-        File mediaStorageDir = new File(
-                Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),
-                getString(R.string.app_name)
-        );
-
-        if (!mediaStorageDir.exists()) {
-            if (!mediaStorageDir.mkdirs()) {
-                return;
-            }
-        }
-
-        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-        File mediaFile = new File(
-                mediaStorageDir.getPath() + File.separator + "IMG_" + timeStamp + ".jpg"
-        );
-
-        // Saving the bitmap
-        try {
-            ByteArrayOutputStream out = new ByteArrayOutputStream();
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, out);
-
-            FileOutputStream stream = new FileOutputStream(mediaFile);
-            stream.write(out.toByteArray());
-            stream.close();
-
-            Log.d(TAG, "saving the bitmap");
-        } catch (IOException exception) {
-            exception.printStackTrace();
-        }
-
-        // Mediascanner need to scan for the image saved
-        MediaScannerConnection.scanFile(getActivity(), new String[]{mediaFile.toString()}, new String[]{"image/jpeg"}, null);
-
-        // Return the Uri
-        ((CameraActivity) getActivity()).returnPhotoUri(Uri.fromFile(mediaFile));
+        ((CameraActivity) getActivity()).returnPhotoUri(photoUri);
     }
 }
