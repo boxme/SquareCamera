@@ -14,8 +14,6 @@ import android.util.Base64;
 import android.view.Display;
 import android.view.WindowManager;
 
-import com.desmond.customcameraapp.R;
-
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
