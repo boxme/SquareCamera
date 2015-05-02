@@ -209,27 +209,27 @@ public class CameraFragment extends Fragment implements SurfaceHolder.Callback, 
     private void determineDisplayOrientation() {
         CameraInfo cameraInfo = new CameraInfo();
         Camera.getCameraInfo(mCameraID, cameraInfo);
-        Log.d(TAG, "received cameraID " + mCameraID);
 
         int rotation = getActivity().getWindowManager().getDefaultDisplay().getRotation();
         int degrees = 0;
 
         switch (rotation) {
-            case Surface.ROTATION_0:
+            case Surface.ROTATION_0: {
                 degrees = 0;
                 break;
-
-            case Surface.ROTATION_90:
+            }
+            case Surface.ROTATION_90: {
                 degrees = 90;
                 break;
-
-            case Surface.ROTATION_180:
+            }
+            case Surface.ROTATION_180: {
                 degrees = 180;
                 break;
-
-            case Surface.ROTATION_270:
+            }
+            case Surface.ROTATION_270: {
                 degrees = 270;
                 break;
+            }
         }
 
         int displayOrientation;
@@ -270,7 +270,8 @@ public class CameraFragment extends Fragment implements SurfaceHolder.Callback, 
         }
 
         final View changeCameraFlashModeBtn = getView().findViewById(R.id.flash);
-        if (parameters.getSupportedFlashModes().contains(mFlashMode)) {
+        List<String> flashModes = parameters.getSupportedFlashModes();
+        if (flashModes != null && flashModes.contains(mFlashMode)) {
             parameters.setFlashMode(mFlashMode);
             changeCameraFlashModeBtn.setVisibility(View.VISIBLE);
         } else {
@@ -295,8 +296,10 @@ public class CameraFragment extends Fragment implements SurfaceHolder.Callback, 
 
     private Size determineBestSize(List<Size> sizes, int widthThreshold) {
         Size bestSize = null;
-
-        for (Size size : sizes) {
+        Size size;
+        int numOfSizes = sizes.size();
+        for (int i = 0; i < numOfSizes; i++) {
+            size = sizes.get(i);
             boolean isDesireRatio = (size.width / 4) == (size.height / 3);
             boolean isBetterSize = (bestSize == null) || size.width > bestSize.width;
 

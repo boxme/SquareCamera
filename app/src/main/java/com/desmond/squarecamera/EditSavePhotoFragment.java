@@ -56,7 +56,6 @@ public class EditSavePhotoFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_edit_save_photo, container, false);
     }
 
@@ -69,8 +68,8 @@ public class EditSavePhotoFragment extends Fragment {
         int imageViewHeight = getArguments().getInt(IMAGE_HEIGHT_KEY);
         byte[] data = getArguments().getByteArray(BITMAP_KEY);
 
-        final View topCoverView = getView().findViewById(R.id.cover_top_view);
-        final View btnCoverView = getView().findViewById(R.id.cover_bottom_view);
+        final View topCoverView = view.findViewById(R.id.cover_top_view);
+        final View btnCoverView = view.findViewById(R.id.cover_bottom_view);
         final ImageView photoImageView = (ImageView) view.findViewById(R.id.photo);
 
         topCoverView.getLayoutParams().height = coverHeight;

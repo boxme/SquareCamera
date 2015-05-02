@@ -30,6 +30,6 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/photo"
         android:text="@string/save_image"
-        android:layout_gravity="center_horizontal"/>
+        android:layout_centerHorizontal="true"/>
 
 </RelativeLayout>
