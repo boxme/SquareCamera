@@ -19,7 +19,11 @@ public class SquareCameraPreview extends SurfaceView {
 
     public static final String TAG = SquareCameraPreview.class.getSimpleName();
     private static final int INVALID_POINTER_ID = -1;
+
+    private static final int ZOOM_OUT = 0;
+    private static final int ZOOM_IN = 1;
     private static final int ZOOM_DELTA = 1;
+
     private static final int FOCUS_SQR_SIZE = 100;
     private static final int FOCUS_MAX_BOUND = 1000;
     private static final int FOCUS_MIN_BOUND = -FOCUS_MAX_BOUND;
@@ -34,7 +38,7 @@ public class SquareCameraPreview extends SurfaceView {
     private int mMaxZoom;
     private boolean mIsZoomSupported;
     private int mActivePointerId = INVALID_POINTER_ID;
-    private float mScaleFactor = 1.0f;
+    private int mScaleFactor = 1;
     private ScaleGestureDetector mScaleDetector;
 
     // For focus
@@ -126,6 +130,7 @@ public class SquareCameraPreview extends SurfaceView {
                 break;
             }
             case MotionEvent.ACTION_POINTER_DOWN: {
+                mCamera.cancelAutoFocus();
                 mIsFocus = false;
                 break;
             }
@@ -139,12 +144,10 @@ public class SquareCameraPreview extends SurfaceView {
     }
 
     private void handleZoom(Camera.Parameters params) {
-        mCamera.cancelAutoFocus();
-
         int zoom = params.getZoom();
-        if (mScaleFactor > 1.0f) {
+        if (mScaleFactor == ZOOM_IN) {
             if (zoom < mMaxZoom) zoom += ZOOM_DELTA;
-        } else if (mScaleFactor < 1.0f) {
+        } else if (mScaleFactor == ZOOM_OUT) {
             if (zoom > 0) zoom -= ZOOM_DELTA;
         }
         params.setZoom(zoom);
@@ -193,7 +196,7 @@ public class SquareCameraPreview extends SurfaceView {
 
         @Override
         public boolean onScale(ScaleGestureDetector detector) {
-            mScaleFactor = detector.getScaleFactor();
+            mScaleFactor = (int) detector.getScaleFactor();
             handleZoom(mCamera.getParameters());
             return true;
         }
