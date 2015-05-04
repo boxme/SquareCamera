@@ -1,11 +1,11 @@
 package com.desmond.squarecamera;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.graphics.Point;
-import android.media.MediaScannerConnection;
 import android.media.ThumbnailUtils;
 import android.net.Uri;
 import android.os.Build;
@@ -93,9 +93,12 @@ public class ImageUtility {
         }
 
         // Mediascanner need to scan for the image saved
-        MediaScannerConnection.scanFile(context, new String[]{mediaFile.toString()}, new String[]{"image/jpeg"}, null);
+        Intent mediaScannerIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
+        Uri fileContentUri = Uri.fromFile(mediaFile);
+        mediaScannerIntent.setData(fileContentUri);
+        context.sendBroadcast(mediaScannerIntent);
 
-        return Uri.fromFile(mediaFile);
+        return fileContentUri;
     }
 
     public static Bitmap decodeSampledBitmapFromPath(String path, int reqWidth, int reqHeight) {
