@@ -25,6 +25,7 @@
         android:background="@android:color/black"/>
 
     <LinearLayout
+        android:id="@+id/camera_tools_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/camera_preview_view"

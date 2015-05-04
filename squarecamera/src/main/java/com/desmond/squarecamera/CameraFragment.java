@@ -411,7 +411,6 @@ public class CameraFragment extends Fragment implements SurfaceHolder.Callback, 
 
 //        Bitmap bitmap = ImageUtility.rotatePicture(getActivity(), rotation, data);
 //        Uri uri = ImageUtility.savePicture(getActivity(), bitmap);
-
         getFragmentManager()
                 .beginTransaction()
                 .replace(

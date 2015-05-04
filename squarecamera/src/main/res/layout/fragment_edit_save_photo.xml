@@ -9,8 +9,7 @@
         android:id="@+id/photo"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:scaleType="fitXY"
-        android:background="@android:color/black"/>
+        android:scaleType="fitXY"/>
 
     <View
         android:id="@+id/cover_top_view"
@@ -23,6 +22,7 @@
         android:id="@+id/cover_bottom_view"
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:background="@android:color/black"
         android:layout_alignBottom="@id/photo"/>
 
     <ImageButton

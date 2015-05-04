@@ -61,9 +61,9 @@ public class EditSavePhotoFragment extends Fragment {
         final View btnCoverView = view.findViewById(R.id.cover_bottom_view);
         final ImageView photoImageView = (ImageView) view.findViewById(R.id.photo);
 
+        photoImageView.getLayoutParams().height = imageViewHeight;
         topCoverView.getLayoutParams().height = coverHeight;
         btnCoverView.getLayoutParams().height = coverHeight;
-        photoImageView.getLayoutParams().height = imageViewHeight;
 
         rotatePicture(rotation, data, photoImageView);
 
