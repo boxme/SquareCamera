@@ -11,6 +11,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
 import android.util.Base64;
+import android.util.Log;
 import android.view.Display;
 import android.view.WindowManager;
 
@@ -178,7 +179,7 @@ public class ImageUtility {
             // be more aggressive with sample down the image (=larger inSampleSize).
             long totalPixels = width * height / inSampleSize;
 
-            //Anything more than 2x the requested pixels we'll sample down further
+            // Anything more than 2x the requested pixels we'll sample down further
             final long totalReqPixelsCap = reqWidth * reqHeight * 2;
 
             while (totalPixels > totalReqPixelsCap) {

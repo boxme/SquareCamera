@@ -77,9 +77,7 @@ public class EditSavePhotoFragment extends Fragment {
 
     private void rotatePicture(int rotation, byte[] data, ImageView photoImageView) {
         Bitmap bitmap = ImageUtility.decodeSampledBitmapFromByte(getActivity(), data);
-
-        Log.d(TAG, "original bitmap width " + bitmap.getWidth() + " height " + bitmap.getHeight());
-
+//        Log.d(TAG, "original bitmap width " + bitmap.getWidth() + " height " + bitmap.getHeight());
         if (rotation != 0) {
             Bitmap oldBitmap = bitmap;
 
