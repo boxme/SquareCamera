@@ -3,6 +3,6 @@
     package="com.desmond.squarecamera">
 
     <application
-        android:theme="@style/AppTheme" />
+        android:theme="@style/CameraFullScreenTheme" />
 
 </manifest>
