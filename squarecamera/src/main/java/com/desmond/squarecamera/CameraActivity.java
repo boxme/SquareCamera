@@ -15,8 +15,8 @@ public class CameraActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         setTheme(R.style.CameraFullScreenTheme);
-        super.onCreate(savedInstanceState);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        super.onCreate(savedInstanceState);
 
         getWindow().setBackgroundDrawable(null);
         setContentView(R.layout.activity_camera);

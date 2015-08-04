@@ -22,6 +22,7 @@ import android.view.SurfaceHolder;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
+import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -34,6 +35,7 @@ public class CameraFragment extends Fragment implements SurfaceHolder.Callback, 
     public static final String CAMERA_ID_KEY = "camera_id";
     public static final String CAMERA_FLASH_KEY = "flash_mode";
     public static final String PREVIEW_HEIGHT_KEY = "preview_height";
+    public static final String COVER_HEIGHT_KEY = "cover_height";
 
     private static final int PICTURE_SIZE_MAX_WIDTH = 1280;
     private static final int PREVIEW_SIZE_MAX_WIDTH = 640;
@@ -81,6 +83,7 @@ public class CameraFragment extends Fragment implements SurfaceHolder.Callback, 
             mCameraID = savedInstanceState.getInt(CAMERA_ID_KEY);
             mFlashMode = savedInstanceState.getString(CAMERA_FLASH_KEY);
             mPreviewHeight = savedInstanceState.getInt(PREVIEW_HEIGHT_KEY);
+            mCoverHeight = savedInstanceState.getInt(COVER_HEIGHT_KEY);
         }
 
         mOrientationListener.enable();
@@ -100,9 +103,9 @@ public class CameraFragment extends Fragment implements SurfaceHolder.Callback, 
                     mPreviewHeight = mPreviewView.getHeight();
                     mCoverHeight = (mPreviewHeight - width) / 2;
 
-                    Log.d(TAG, "preview width " + width + " height " + mPreviewHeight);
-                    topCoverView.getLayoutParams().height = mCoverHeight;
-                    btnCoverView.getLayoutParams().height = mCoverHeight;
+//                    topCoverView.getLayoutParams().height = mCoverHeight;
+//                    btnCoverView.getLayoutParams().height = mCoverHeight;
+                    resizeTopAndBtmCover(topCoverView, btnCoverView);
 
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
                         mPreviewView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
@@ -163,7 +166,22 @@ public class CameraFragment extends Fragment implements SurfaceHolder.Callback, 
         outState.putInt(CAMERA_ID_KEY, mCameraID);
         outState.putString(CAMERA_FLASH_KEY, mFlashMode);
         outState.putInt(PREVIEW_HEIGHT_KEY, mPreviewHeight);
+        outState.putInt(COVER_HEIGHT_KEY, mCoverHeight);
         super.onSaveInstanceState(outState);
+    }
+
+    private void resizeTopAndBtmCover(final View topCover, final View bottomCover) {
+        ResizeHeightAnimation resizeTopAnimation
+                = new ResizeHeightAnimation(topCover, mCoverHeight);
+        resizeTopAnimation.setDuration(800);
+        resizeTopAnimation.setInterpolator(new AccelerateDecelerateInterpolator());
+        topCover.startAnimation(resizeTopAnimation);
+
+        ResizeHeightAnimation resizeBtmAnimation
+                = new ResizeHeightAnimation(bottomCover, mCoverHeight);
+        resizeBtmAnimation.setDuration(800);
+        resizeBtmAnimation.setInterpolator(new AccelerateDecelerateInterpolator());
+        bottomCover.startAnimation(resizeBtmAnimation);
     }
 
     private void getCamera(int cameraID) {
