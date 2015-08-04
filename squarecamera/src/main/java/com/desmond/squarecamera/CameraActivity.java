@@ -18,7 +18,9 @@ public class CameraActivity extends AppCompatActivity {
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         super.onCreate(savedInstanceState);
 
-        getWindow().setBackgroundDrawable(null);
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().hide();
+        }
         setContentView(R.layout.activity_camera);
 
         if (savedInstanceState == null) {
@@ -49,6 +51,6 @@ public class CameraActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        finish(); // avoid stopped preview and crash after turning screen off/on
+        onCancel(null);
     }
 }
