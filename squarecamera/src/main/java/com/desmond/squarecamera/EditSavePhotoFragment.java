@@ -1,14 +1,15 @@
 package com.desmond.squarecamera;
 
 
+import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.Matrix;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,18 +24,16 @@ public class EditSavePhotoFragment extends Fragment {
     public static final String TAG = EditSavePhotoFragment.class.getSimpleName();
     public static final String BITMAP_KEY = "bitmap_byte_array";
     public static final String ROTATION_KEY = "rotation";
-    public static final String COVER_HEIGHT_KEY = "cover_height";
-    public static final String IMAGE_HEIGHT_KEY = "image_height";
+    public static final String IMAGE_INFO = "image_info";
 
     public static Fragment newInstance(byte[] bitmapByteArray, int rotation,
-                                       int coverHeight, int imageViewHeight) {
+                                       @NonNull ImageParameters parameters) {
         Fragment fragment = new EditSavePhotoFragment();
 
         Bundle args = new Bundle();
         args.putByteArray(BITMAP_KEY, bitmapByteArray);
         args.putInt(ROTATION_KEY, rotation);
-        args.putInt(COVER_HEIGHT_KEY, coverHeight);
-        args.putInt(IMAGE_HEIGHT_KEY, imageViewHeight);
+        args.putParcelable(IMAGE_INFO, parameters);
 
         fragment.setArguments(args);
         return fragment;
@@ -53,17 +52,29 @@ public class EditSavePhotoFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         int rotation = getArguments().getInt(ROTATION_KEY);
-        int coverHeight = getArguments().getInt(COVER_HEIGHT_KEY);
-        int imageViewHeight = getArguments().getInt(IMAGE_HEIGHT_KEY);
         byte[] data = getArguments().getByteArray(BITMAP_KEY);
+        ImageParameters imageParameters = getArguments().getParcelable(IMAGE_INFO);
+
+        if (imageParameters == null) {
+            return;
+        }
 
         final View topCoverView = view.findViewById(R.id.cover_top_view);
         final View btnCoverView = view.findViewById(R.id.cover_bottom_view);
         final ImageView photoImageView = (ImageView) view.findViewById(R.id.photo);
 
-        photoImageView.getLayoutParams().height = imageViewHeight;
-        topCoverView.getLayoutParams().height = coverHeight;
-        btnCoverView.getLayoutParams().height = coverHeight;
+        imageParameters.mIsPortrait =
+                getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT;
+
+        if (imageParameters.isPortrait()) {
+            photoImageView.getLayoutParams().height = imageParameters.mPreviewHeight;
+            topCoverView.getLayoutParams().height = imageParameters.mCoverHeight;
+            btnCoverView.getLayoutParams().height = imageParameters.mCoverHeight;
+        } else {
+            photoImageView.getLayoutParams().width = imageParameters.mPreviewWidth;
+            topCoverView.getLayoutParams().width = imageParameters.mCoverWidth;
+            btnCoverView.getLayoutParams().width = imageParameters.mCoverWidth;
+        }
 
         rotatePicture(rotation, data, photoImageView);
 
