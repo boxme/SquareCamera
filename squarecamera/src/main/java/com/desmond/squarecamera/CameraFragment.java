@@ -63,15 +63,8 @@ public class CameraFragment extends Fragment implements SurfaceHolder.Callback, 
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_camera, container, false);
-    }
-
-    @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
         if (savedInstanceState == null) {
             mCameraID = getBackCameraID();
             mFlashMode = Camera.Parameters.FLASH_MODE_AUTO;
@@ -81,7 +74,17 @@ public class CameraFragment extends Fragment implements SurfaceHolder.Callback, 
             mFlashMode = savedInstanceState.getString(CAMERA_FLASH_KEY);
             mImageParameters = savedInstanceState.getParcelable(IMAGE_INFO);
         }
+    }
 
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        return inflater.inflate(R.layout.fragment_camera, container, false);
+    }
+
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
         mOrientationListener.enable();
 
         mPreviewView = (SquareCameraPreview) view.findViewById(R.id.camera_preview_view);
@@ -137,24 +140,22 @@ public class CameraFragment extends Fragment implements SurfaceHolder.Callback, 
         });
 
         final View changeCameraFlashModeBtn = view.findViewById(R.id.flash);
-        final TextView autoFlashIcon = (TextView) view.findViewById(R.id.auto_flash_icon);
         changeCameraFlashModeBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (mFlashMode.equalsIgnoreCase(Camera.Parameters.FLASH_MODE_AUTO)) {
                     mFlashMode = Camera.Parameters.FLASH_MODE_ON;
-                    autoFlashIcon.setText("On");
                 } else if (mFlashMode.equalsIgnoreCase(Camera.Parameters.FLASH_MODE_ON)) {
                     mFlashMode = Camera.Parameters.FLASH_MODE_OFF;
-                    autoFlashIcon.setText("Off");
                 } else if (mFlashMode.equalsIgnoreCase(Camera.Parameters.FLASH_MODE_OFF)) {
                     mFlashMode = Camera.Parameters.FLASH_MODE_AUTO;
-                    autoFlashIcon.setText("Auto");
                 }
 
+                setupFlashMode();
                 setupCamera();
             }
         });
+        setupFlashMode();
 
         final ImageView takePhotoBtn = (ImageView) view.findViewById(R.id.capture_image_button);
         takePhotoBtn.setOnClickListener(new View.OnClickListener() {
@@ -163,6 +164,20 @@ public class CameraFragment extends Fragment implements SurfaceHolder.Callback, 
                 takePicture();
             }
         });
+    }
+
+    private void setupFlashMode() {
+        View view = getView();
+        if (view == null) return;
+
+        final TextView autoFlashIcon = (TextView) view.findViewById(R.id.auto_flash_icon);
+        if (Camera.Parameters.FLASH_MODE_AUTO.equalsIgnoreCase(mFlashMode)) {
+            autoFlashIcon.setText("Auto");
+        } else if (Camera.Parameters.FLASH_MODE_ON.equalsIgnoreCase(mFlashMode)) {
+            autoFlashIcon.setText("On");
+        }  else if (Camera.Parameters.FLASH_MODE_OFF.equalsIgnoreCase(mFlashMode)) {
+            autoFlashIcon.setText("Off");
+        }
     }
 
     @Override
@@ -188,7 +203,6 @@ public class CameraFragment extends Fragment implements SurfaceHolder.Callback, 
     }
 
     private void getCamera(int cameraID) {
-        Log.d(TAG, "get camera with id " + cameraID);
         try {
             mCamera = Camera.open(cameraID);
             mPreviewView.setCamera(mCamera);
@@ -339,8 +353,11 @@ public class CameraFragment extends Fragment implements SurfaceHolder.Callback, 
     }
 
     private void restartPreview() {
-        stopCameraPreview();
-        mCamera.release();
+        if (mCamera != null) {
+            stopCameraPreview();
+            mCamera.release();
+            mCamera = null;
+        }
 
         getCamera(mCameraID);
         startCameraPreview();
@@ -385,8 +402,12 @@ public class CameraFragment extends Fragment implements SurfaceHolder.Callback, 
         mOrientationListener.disable();
 
         // stop the preview
-        stopCameraPreview();
-        mCamera.release();
+        if (mCamera != null) {
+            stopCameraPreview();
+            mCamera.release();
+            mCamera = null;
+        }
+
         super.onStop();
     }
 
@@ -435,8 +456,10 @@ public class CameraFragment extends Fragment implements SurfaceHolder.Callback, 
                         + mImageParameters.mLayoutOrientation
         ) % 360;
 
-        Log.d(TAG, "normal orientation: " + mOrientationListener.getRememberedNormalOrientation());
-        Log.d(TAG, "Rotate Picture by: " + rotation);
+//        Log.d(TAG, "normal orientation: " + mOrientationListener.getRememberedNormalOrientation());
+//        Log.d(TAG, "Rotate Picture by: " + rotation);
+
+        Log.d(TAG, mImageParameters.getStringValues());
 
         getFragmentManager()
                 .beginTransaction()

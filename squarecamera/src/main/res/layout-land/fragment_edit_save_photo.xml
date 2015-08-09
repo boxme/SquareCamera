@@ -6,26 +6,12 @@
     android:layout_height="match_parent"
     android:background="@android:color/black">
 
-    <ImageView
+    <com.desmond.squarecamera.SquareImageView
         android:id="@+id/photo"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:scaleType="fitXY"/>
-
-    <View
-        android:id="@+id/cover_top_view"
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_alignLeft="@id/photo"
-        android:background="@android:color/black"/>
-
-    <View
-        android:id="@+id/cover_bottom_view"
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:background="@android:color/black"
-        android:layout_alignRight="@id/photo"/>
-
+        android:scaleType="fitXY"
+        android:layout_centerHorizontal="true"/>
 
     <ImageButton
         android:id="@+id/save_photo"

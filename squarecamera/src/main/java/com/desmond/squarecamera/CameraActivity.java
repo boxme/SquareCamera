@@ -3,6 +3,7 @@ package com.desmond.squarecamera;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 
@@ -14,7 +15,6 @@ public class CameraActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         setTheme(R.style.CameraFullScreenTheme);
-//        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         super.onCreate(savedInstanceState);
 
         if (getSupportActionBar() != null) {
@@ -25,7 +25,7 @@ public class CameraActivity extends AppCompatActivity {
         if (savedInstanceState == null) {
             getSupportFragmentManager()
                     .beginTransaction()
-                    .replace(R.id.fragment_container, CameraFragment.newInstance())
+                    .replace(R.id.fragment_container, CameraFragment.newInstance(), CameraFragment.TAG)
                     .commit();
         }
     }
@@ -44,7 +44,16 @@ public class CameraActivity extends AppCompatActivity {
     }
 
     public void onCancel(View view) {
-        getSupportFragmentManager().popBackStack();
+        if (view == null) {
+            Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.fragment_container);
+            if (fragment instanceof EditSavePhotoFragment) {
+                // Do nothing
+            } else {
+                getSupportFragmentManager().popBackStack();
+            }
+        } else {
+            getSupportFragmentManager().popBackStack();
+        }
     }
 
     @Override

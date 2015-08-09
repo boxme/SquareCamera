@@ -59,22 +59,10 @@ public class EditSavePhotoFragment extends Fragment {
             return;
         }
 
-        final View topCoverView = view.findViewById(R.id.cover_top_view);
-        final View btnCoverView = view.findViewById(R.id.cover_bottom_view);
         final ImageView photoImageView = (ImageView) view.findViewById(R.id.photo);
 
         imageParameters.mIsPortrait =
                 getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT;
-
-        if (imageParameters.isPortrait()) {
-            photoImageView.getLayoutParams().height = imageParameters.mPreviewHeight;
-            topCoverView.getLayoutParams().height = imageParameters.mCoverHeight;
-            btnCoverView.getLayoutParams().height = imageParameters.mCoverHeight;
-        } else {
-            photoImageView.getLayoutParams().width = imageParameters.mPreviewWidth;
-            topCoverView.getLayoutParams().width = imageParameters.mCoverWidth;
-            btnCoverView.getLayoutParams().width = imageParameters.mCoverWidth;
-        }
 
         rotatePicture(rotation, data, photoImageView);
 
@@ -106,7 +94,10 @@ public class EditSavePhotoFragment extends Fragment {
     }
 
     private void savePicture() {
-        ImageView photoImageView = (ImageView) getView().findViewById(R.id.photo);
+        View view = getView();
+        if (view == null) return;
+
+        ImageView photoImageView = (ImageView) view.findViewById(R.id.photo);
 
         Bitmap bitmap = ((BitmapDrawable) photoImageView.getDrawable()).getBitmap();
         Uri photoUri = ImageUtility.savePicture(getActivity(), bitmap);
