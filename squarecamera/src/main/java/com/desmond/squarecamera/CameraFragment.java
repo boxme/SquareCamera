@@ -245,6 +245,7 @@ public class CameraFragment extends Fragment implements SurfaceHolder.Callback, 
         CameraInfo cameraInfo = new CameraInfo();
         Camera.getCameraInfo(mCameraID, cameraInfo);
 
+        // Clockwise rotation needed to align the window display to the natural position
         int rotation = getActivity().getWindowManager().getDefaultDisplay().getRotation();
         int degrees = 0;
 
@@ -269,15 +270,16 @@ public class CameraFragment extends Fragment implements SurfaceHolder.Callback, 
 
         int displayOrientation;
 
-        // Camera direction
+        // CameraInfo.Orientation is the clockwise rotation for the camera to rotate to align
+        // with the natural position of the device
         if (cameraInfo.facing == CameraInfo.CAMERA_FACING_FRONT) {
             // Orientation is angle of rotation when facing the camera for
             // the camera image to match the natural orientation of the device
             displayOrientation = (cameraInfo.orientation + degrees) % 360;
             displayOrientation = (360 - displayOrientation) % 360;
-            Log.d(TAG, "Front Camera " + cameraInfo.orientation);
+//            Log.d(TAG, "Front Camera " + cameraInfo.orientation);
         } else {
-            Log.d(TAG, "Back Camera " + cameraInfo.orientation);
+//            Log.d(TAG, "Back Camera " + cameraInfo.orientation);
             displayOrientation = (cameraInfo.orientation - degrees + 360) % 360;
         }
 
@@ -285,9 +287,9 @@ public class CameraFragment extends Fragment implements SurfaceHolder.Callback, 
         mImageParameters.mDisplayOrientation = displayOrientation;
         mImageParameters.mLayoutOrientation = degrees;
 
-        Log.d(TAG, "displayOrientation: " + displayOrientation + " layoutOrientation: " + degrees);
+//        Log.d(TAG, "displayOrientation: " + displayOrientation + " layoutOrientation: " + degrees);
 
-        mCamera.setDisplayOrientation(displayOrientation);
+        mCamera.setDisplayOrientation(mImageParameters.mDisplayOrientation);
     }
 
     /**
@@ -450,17 +452,9 @@ public class CameraFragment extends Fragment implements SurfaceHolder.Callback, 
      */
     @Override
     public void onPictureTaken(byte[] data, Camera camera) {
-        int rotation = (
-                mImageParameters.mDisplayOrientation
-                        + mOrientationListener.getRememberedNormalOrientation()
-                        + mImageParameters.mLayoutOrientation
-        ) % 360;
-
-//        Log.d(TAG, "normal orientation: " + mOrientationListener.getRememberedNormalOrientation());
+        int rotation = getPhotoRotation();
+//        Log.d(TAG, "normal orientation: " + orientation);
 //        Log.d(TAG, "Rotate Picture by: " + rotation);
-
-        Log.d(TAG, mImageParameters.getStringValues());
-
         getFragmentManager()
                 .beginTransaction()
                 .replace(
@@ -469,6 +463,21 @@ public class CameraFragment extends Fragment implements SurfaceHolder.Callback, 
                         EditSavePhotoFragment.TAG)
                 .addToBackStack(null)
                 .commit();
+    }
+
+    private int getPhotoRotation() {
+        int rotation;
+        int orientation = mOrientationListener.getRememberedNormalOrientation();
+        CameraInfo info = new CameraInfo();
+        Camera.getCameraInfo(mCameraID, info);
+
+        if (info.facing == CameraInfo.CAMERA_FACING_FRONT) {
+            rotation = (info.orientation - orientation + 360) % 360;
+        } else {
+            rotation = (info.orientation + orientation) % 360;
+        }
+
+        return rotation;
     }
 
     /**
@@ -490,8 +499,11 @@ public class CameraFragment extends Fragment implements SurfaceHolder.Callback, 
             }
         }
 
+        /**
+         * @param degrees the amount of clockwise rotation needed to rotate back to the device's natural position
+         * @return Normalized degrees to just 0, 90, 180, 270
+         */
         private int normalize(int degrees) {
-//            Log.d(TAG, "orientation degrees: " + degrees);
             if (degrees > 315 || degrees <= 45) {
                 return 0;
             }
@@ -516,6 +528,7 @@ public class CameraFragment extends Fragment implements SurfaceHolder.Callback, 
         }
 
         public int getRememberedNormalOrientation() {
+            rememberOrientation();
             return mRememberedNormalOrientation;
         }
     }
