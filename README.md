@@ -8,6 +8,7 @@ Android module that takes a square photo using the native Android Camera APIs. T
 - Two fingers zooming
 - Front & Back camera
 - Flash mode
+- Supports both portrait & landscape
 
 ## SDK Support
 Support from SDK version 14 onwards
