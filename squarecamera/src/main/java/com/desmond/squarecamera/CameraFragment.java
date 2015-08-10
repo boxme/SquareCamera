@@ -65,6 +65,9 @@ public class CameraFragment extends Fragment implements SurfaceHolder.Callback, 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        // Restore your state here because a double rotation with this fragment
+        // in the backstack will cause improper state restoration
+        // onCreate() -> onSavedInstanceState() instead of going through onCreateView()
         if (savedInstanceState == null) {
             mCameraID = getBackCameraID();
             mFlashMode = Camera.Parameters.FLASH_MODE_AUTO;
@@ -182,6 +185,7 @@ public class CameraFragment extends Fragment implements SurfaceHolder.Callback, 
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
+        Log.d(TAG, "onSaveInstanceState");
         outState.putInt(CAMERA_ID_KEY, mCameraID);
         outState.putString(CAMERA_FLASH_KEY, mFlashMode);
         outState.putParcelable(IMAGE_INFO, mImageParameters);
@@ -270,8 +274,8 @@ public class CameraFragment extends Fragment implements SurfaceHolder.Callback, 
 
         int displayOrientation;
 
-        // CameraInfo.Orientation is the clockwise rotation for the camera to rotate to align
-        // with the natural position of the device
+        // CameraInfo.Orientation is the angle relative to the natural position of the device
+        // in clockwise rotation (angle that is rotated clockwise from the natural position)
         if (cameraInfo.facing == CameraInfo.CAMERA_FACING_FRONT) {
             // Orientation is angle of rotation when facing the camera for
             // the camera image to match the natural orientation of the device
@@ -495,7 +499,7 @@ public class CameraFragment extends Fragment implements SurfaceHolder.Callback, 
         }
 
         /**
-         * @param degrees the amount of clockwise rotation needed to rotate back to the device's natural position
+         * @param degrees Amount of clockwise rotation from the device's natural position
          * @return Normalized degrees to just 0, 90, 180, 270
          */
         private int normalize(int degrees) {
