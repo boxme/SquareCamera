@@ -64,6 +64,13 @@ public class EditSavePhotoFragment extends Fragment {
         imageParameters.mIsPortrait =
                 getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT;
 
+        final View topView = view.findViewById(R.id.topView);
+        if (imageParameters.mIsPortrait) {
+            topView.getLayoutParams().height = imageParameters.mCoverHeight;
+        } else {
+            topView.getLayoutParams().width = imageParameters.mCoverWidth;
+        }
+
         rotatePicture(rotation, data, photoImageView);
 
         view.findViewById(R.id.save_photo).setOnClickListener(new View.OnClickListener() {

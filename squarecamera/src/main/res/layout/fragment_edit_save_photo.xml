@@ -5,12 +5,17 @@
     android:background="@android:color/black"
     tools:context="com.desmond.squarecamera.EditSavePhotoFragment">
 
+    <View
+        android:id="@+id/topView"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"/>
+
     <com.desmond.squarecamera.SquareImageView
         android:id="@+id/photo"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_centerVertical="true"
-        android:scaleType="fitXY"/>
+        android:layout_below="@id/topView"
+        android:scaleType="centerCrop"/>
 
     <ImageButton
         android:id="@+id/save_photo"
