@@ -13,6 +13,18 @@ Android module that takes a square photo using the native Android Camera APIs. T
 ## SDK Support
 Support from SDK version 14 onwards
 
+## Download
+jCenter:
+```
+repositories {
+    jcenter()
+}
+
+dependencies {
+    compile 'com.github.boxme:squarecamera:1.0.0'
+}
+```
+
 ## Example
 ```
 private static final int REQUEST_CAMERA = 0;
