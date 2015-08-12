@@ -11,6 +11,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
 import android.util.Base64;
+import android.util.Log;
 import android.view.Display;
 import android.view.WindowManager;
 
@@ -109,6 +110,10 @@ public class ImageUtility {
 
         options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight);
 
+        options.inScaled = true;
+        options.inDensity = options.outWidth;
+        options.inTargetDensity = reqWidth * options.inSampleSize;
+
         options.inJustDecodeBounds = false;
         options.inPurgeable = true;
         options.inInputShareable = true;
@@ -141,6 +146,12 @@ public class ImageUtility {
 
         // Calculate inSampleSize
         options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight);
+
+        // Load & resize the image to be 1/inSampleSize dimensions
+        // Use when you do not want to scale the image with a inSampleSize that is a power of 2
+        options.inScaled = true;
+        options.inDensity = options.outWidth;
+        options.inTargetDensity = reqWidth * options.inSampleSize;
 
         // Decode bitmap with inSampleSize set
         options.inJustDecodeBounds = false; // If set to true, the decoder will return null (no bitmap), but the out... fields will still be set, allowing the caller to query the bitmap without having to allocate the memory for its pixels.
