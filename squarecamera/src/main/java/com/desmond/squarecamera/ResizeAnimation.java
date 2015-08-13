@@ -30,7 +30,6 @@ public class ResizeAnimation extends Animation {
         } else {
             mView.getLayoutParams().width = newLength;
         }
-        mView.requestLayout();
     }
 
     @Override
