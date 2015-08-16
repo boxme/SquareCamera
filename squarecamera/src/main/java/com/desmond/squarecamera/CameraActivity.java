@@ -14,7 +14,7 @@ public class CameraActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        setTheme(R.style.CameraFullScreenTheme);
+        setTheme(R.style.squarecamera__CameraFullScreenTheme);
         super.onCreate(savedInstanceState);
 
         if (getSupportActionBar() != null) {

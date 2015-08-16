@@ -185,7 +185,7 @@ public class CameraFragment extends Fragment implements SurfaceHolder.Callback, 
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
-        Log.d(TAG, "onSaveInstanceState");
+//        Log.d(TAG, "onSaveInstanceState");
         outState.putInt(CAMERA_ID_KEY, mCameraID);
         outState.putString(CAMERA_FLASH_KEY, mFlashMode);
         outState.putParcelable(IMAGE_INFO, mImageParameters);
