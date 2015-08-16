@@ -11,7 +11,6 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
 import android.util.Base64;
-import android.util.Log;
 import android.view.Display;
 import android.view.WindowManager;
 
@@ -66,7 +65,7 @@ public class ImageUtility {
 
         File mediaStorageDir = new File(
                 Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),
-                context.getString(R.string.app_name)
+                context.getString(R.string.squarecamera__app_name)
         );
 
         if (!mediaStorageDir.exists()) {

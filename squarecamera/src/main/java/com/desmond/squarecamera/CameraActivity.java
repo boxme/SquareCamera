@@ -20,7 +20,7 @@ public class CameraActivity extends AppCompatActivity {
         if (getSupportActionBar() != null) {
             getSupportActionBar().hide();
         }
-        setContentView(R.layout.activity_camera);
+        setContentView(R.layout.squarecamera__activity_camera);
 
         if (savedInstanceState == null) {
             getSupportFragmentManager()

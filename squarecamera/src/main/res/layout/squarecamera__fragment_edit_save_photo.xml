@@ -23,7 +23,7 @@
         android:layout_height="wrap_content"
         android:padding="10dp"
         android:layout_alignParentBottom="true"
-        android:src="@drawable/save_photo_drawable"
+        android:src="@drawable/squarecamera__save_photo_drawable"
         android:background="@android:color/transparent"
         android:layout_centerHorizontal="true"/>
 
@@ -32,7 +32,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:padding="10dp"
-        android:src="@drawable/cancel_drawable"
+        android:src="@drawable/squarecamera__cancel_drawable"
         android:background="@android:color/transparent"
         android:onClick="onCancel"/>
 
