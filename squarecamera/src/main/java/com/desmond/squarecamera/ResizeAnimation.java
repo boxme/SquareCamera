@@ -18,15 +18,9 @@ public class ResizeAnimation extends Animation {
 
     public ResizeAnimation(@NonNull View view, final ImageParameters imageParameters) {
         mIsPortrait = imageParameters.isPortrait();
-
-        if (mIsPortrait) {
-            mStartLength = view.getHeight();
-        } else {
-            mStartLength = view.getWidth();
-        }
-
-        mFinalLength = imageParameters.getAnimationParameter();
         mView = view;
+        mStartLength = mIsPortrait ? mView.getHeight() : mView.getWidth();
+        mFinalLength = imageParameters.getAnimationParameter();
 //        Log.d(TAG, "Start: " + mStartLength + " final: " + mFinalLength);
     }
 
