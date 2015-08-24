@@ -9,16 +9,25 @@ import android.view.animation.Transformation;
  * Created by desmond on 4/8/15.
  */
 public class ResizeAnimation extends Animation {
+//    public static final String TAG = ResizeAnimation.class.getSimpleName();
+
     final int mStartLength;
     final int mFinalLength;
     final boolean mIsPortrait;
     final View mView;
 
     public ResizeAnimation(@NonNull View view, final ImageParameters imageParameters) {
-        mStartLength = view.getContext().getResources().getDimensionPixelSize(R.dimen.squarecamera__cover_start_width);
-        mFinalLength = imageParameters.getAnimationParameter();
         mIsPortrait = imageParameters.isPortrait();
+
+        if (mIsPortrait) {
+            mStartLength = view.getHeight();
+        } else {
+            mStartLength = view.getWidth();
+        }
+
+        mFinalLength = imageParameters.getAnimationParameter();
         mView = view;
+//        Log.d(TAG, "Start: " + mStartLength + " final: " + mFinalLength);
     }
 
     @Override

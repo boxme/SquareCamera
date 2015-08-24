@@ -99,6 +99,7 @@ public class CameraFragment extends Fragment implements SurfaceHolder.Callback, 
         mImageParameters.mIsPortrait =
                 getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT;
 
+        Log.d(TAG, "onViewCreated");
         if (savedInstanceState == null) {
             ViewTreeObserver observer = mPreviewView.getViewTreeObserver();
             observer.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
@@ -110,6 +111,8 @@ public class CameraFragment extends Fragment implements SurfaceHolder.Callback, 
                     mImageParameters.mCoverWidth = mImageParameters.mCoverHeight
                             = mImageParameters.calculateCoverWidthHeight();
 
+//                    Log.d(TAG, "parameters: " + mImageParameters.getStringValues());
+//                    Log.d(TAG, "cover height " + topCoverView.getHeight());
                     resizeTopAndBtmCover(topCoverView, btnCoverView);
 
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
