@@ -44,6 +44,7 @@ public class SquareCameraPreview extends SurfaceView {
 
     // For focus
     private boolean mIsFocus;
+    private boolean mIsFocusReady;
     private Camera.Area mFocusArea;
     private ArrayList<Camera.Area> mFocusAreas;
 
@@ -134,7 +135,7 @@ public class SquareCameraPreview extends SurfaceView {
                 break;
             }
             case MotionEvent.ACTION_UP: {
-                if (mIsFocus) {
+                if (mIsFocus && mIsFocusReady) {
                     handleFocus(mCamera.getParameters());
                 }
                 mActivePointerId = INVALID_POINTER_ID;
@@ -185,6 +186,10 @@ public class SquareCameraPreview extends SurfaceView {
                 }
             });
         }
+    }
+
+    public void setIsFocusReady(final boolean isFocusReady) {
+        mIsFocusReady = isFocusReady;
     }
 
     private boolean setFocusBound(float x, float y) {

@@ -247,6 +247,7 @@ public class CameraFragment extends Fragment implements SurfaceHolder.Callback, 
             mCamera.startPreview();
 
             setSafeToTakePhoto(true);
+            setCameraFocusReady(true);
         } catch (IOException e) {
             Log.d(TAG, "Can't start camera preview due to IOException " + e);
             e.printStackTrace();
@@ -257,15 +258,22 @@ public class CameraFragment extends Fragment implements SurfaceHolder.Callback, 
      * Stop the camera preview
      */
     private void stopCameraPreview() {
+        setSafeToTakePhoto(false);
+        setCameraFocusReady(false);
+
         // Nulls out callbacks, stops face detection
         mCamera.stopPreview();
         mPreviewView.setCamera(null);
-
-        setSafeToTakePhoto(false);
     }
 
     private void setSafeToTakePhoto(final boolean isSafeToTakePhoto) {
         mIsSafeToTakePhoto = isSafeToTakePhoto;
+    }
+
+    private void setCameraFocusReady(final boolean isFocusReady) {
+        if (this.mPreviewView != null) {
+            mPreviewView.setIsFocusReady(isFocusReady);
+        }
     }
 
     /**
