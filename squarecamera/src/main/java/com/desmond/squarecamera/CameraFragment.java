@@ -57,9 +57,9 @@ public class CameraFragment extends Fragment implements SurfaceHolder.Callback, 
     public CameraFragment() {}
 
     @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-        mOrientationListener = new CameraOrientationListener(activity);
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        mOrientationListener = new CameraOrientationListener(context);
     }
 
     @Override
@@ -399,6 +399,15 @@ public class CameraFragment extends Fragment implements SurfaceHolder.Callback, 
 
         // jpeg callback occurs when the compressed image is available
         mCamera.takePicture(shutterCallback, raw, postView, this);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        if (mCamera == null) {
+            restartPreview();
+        }
     }
 
     @Override

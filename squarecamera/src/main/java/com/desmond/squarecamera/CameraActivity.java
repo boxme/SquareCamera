@@ -3,7 +3,6 @@ package com.desmond.squarecamera;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 
@@ -44,21 +43,11 @@ public class CameraActivity extends AppCompatActivity {
     }
 
     public void onCancel(View view) {
-        if (view == null) {
-            Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.fragment_container);
-            if (fragment instanceof EditSavePhotoFragment) {
-                // Do nothing
-            } else {
-                getSupportFragmentManager().popBackStack();
-            }
-        } else {
-            getSupportFragmentManager().popBackStack();
-        }
+        getSupportFragmentManager().popBackStack();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        onCancel(null);
     }
 }
