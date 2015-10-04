@@ -7,7 +7,7 @@ Android module that takes a square photo using the native Android Camera APIs. T
 - Tap to focus
 - Two fingers zooming
 - Front & Back camera
-- Flash mode
+- Flash mode (Saved when the user exits)
 - Supports both portrait & landscape
 
 ## SDK Support
@@ -21,7 +21,7 @@ repositories {
 }
 
 dependencies {
-    compile 'com.github.boxme:squarecamera:1.0.3'
+    compile 'com.github.boxme:squarecamera:1.0.4'
 }
 ```
 
