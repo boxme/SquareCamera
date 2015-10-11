@@ -101,7 +101,6 @@ public class CameraFragment extends Fragment implements SurfaceHolder.Callback, 
         mImageParameters.mIsPortrait =
                 getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT;
 
-        Log.d(TAG, "onViewCreated");
         if (savedInstanceState == null) {
             ViewTreeObserver observer = mPreviewView.getViewTreeObserver();
             observer.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {

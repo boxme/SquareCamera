@@ -13,4 +13,19 @@
         <item name="android:windowContentOverlay">@null</item>
     </style>
 
+    <style name="squarecamera__CameraFullScreenTheme.AppBarOverlay"
+        parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+
+    <style name="squarecamera__CameraFullScreenTheme.PopupOverlay"
+        parent="ThemeOverlay.AppCompat.Light" />
+
+    <style name="squarecamera__CameraFullScreenTheme.NoUI" parent="squarecamera__CameraFullScreenTheme.Base">
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowAnimationStyle">@null</item>
+        <item name="android:windowDisablePreview">true</item>
+        <item name="android:windowIsFloating">true</item>
+    </style>
+
+
 </resources>

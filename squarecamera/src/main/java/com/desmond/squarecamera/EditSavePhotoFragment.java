@@ -1,6 +1,8 @@
 package com.desmond.squarecamera;
 
 
+import android.app.Activity;
+import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.Matrix;
@@ -101,14 +103,30 @@ public class EditSavePhotoFragment extends Fragment {
     }
 
     private void savePicture() {
-        View view = getView();
-        if (view == null) return;
+        requestForPermission();
+    }
 
-        ImageView photoImageView = (ImageView) view.findViewById(R.id.photo);
+    private void requestForPermission() {
+        RuntimePermissionActivity.startActivity(getActivity(), 1, RuntimePermissionActivity.Permission.WRITE_EXTERNAL_STORAGE);
+    }
 
-        Bitmap bitmap = ((BitmapDrawable) photoImageView.getDrawable()).getBitmap();
-        Uri photoUri = ImageUtility.savePicture(getActivity(), bitmap);
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (Activity.RESULT_OK != resultCode) return;
 
-        ((CameraActivity) getActivity()).returnPhotoUri(photoUri);
+        if (requestCode == 1 && data != null) {
+            final boolean isGranted = data.getBooleanExtra(RuntimePermissionActivity.REQUESTED_PERMISSION, false);
+            final View view = getView();
+            if (isGranted && view != null) {
+                ImageView photoImageView = (ImageView) view.findViewById(R.id.photo);
+
+                Bitmap bitmap = ((BitmapDrawable) photoImageView.getDrawable()).getBitmap();
+                Uri photoUri = ImageUtility.savePicture(getActivity(), bitmap);
+
+                ((CameraActivity) getActivity()).returnPhotoUri(photoUri);
+            }
+        } else {
+            super.onActivityResult(requestCode, resultCode, data);
+        }
     }
 }

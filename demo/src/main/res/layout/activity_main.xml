@@ -16,6 +16,6 @@
         android:text="Launch Camera"
         android:layout_centerHorizontal="true"
         android:layout_below="@id/image"
-        android:onClick="launchCamera"/>
+        android:onClick="requestForCameraPermission"/>
 
 </RelativeLayout>
