@@ -1,6 +1,5 @@
 package com.desmond.squarecamera;
 
-import android.Manifest;
 import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -16,18 +15,14 @@ import android.support.v7.app.AppCompatActivity;
 public class RuntimePermissionActivity extends AppCompatActivity {
 
     public static final String REQUESTED_PERMISSION = "requested_permission";
-    public static final int REQUEST_CODE = 1;
+    private static final int REQUEST_CODE = 1;
 
     public static void startActivity(final FragmentActivity activity,
                                      final int requestCode,
-                                     final Permission requestedPermission) {
+                                     final String requestedPermission) {
         final Intent intent = new Intent(activity, RuntimePermissionActivity.class);
         intent.putExtra(REQUESTED_PERMISSION, requestedPermission);
         activity.startActivityForResult(intent, requestCode);
-    }
-
-    public enum Permission {
-        WRITE_EXTERNAL_STORAGE, READ_EXTERNAL_STORAGE
     }
 
     @Override
@@ -40,28 +35,21 @@ public class RuntimePermissionActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        Permission requestedPermission = (Permission) getIntent().getSerializableExtra(REQUESTED_PERMISSION);
-        String permission = null;
-        switch (requestedPermission) {
-            case WRITE_EXTERNAL_STORAGE:
-                permission = Manifest.permission.WRITE_EXTERNAL_STORAGE;
-                break;
-
-            case READ_EXTERNAL_STORAGE:
-                permission = Manifest.permission.READ_EXTERNAL_STORAGE;
-                break;
-
-            default:
-                break;
-        }
-
-        if (ContextCompat.checkSelfPermission(RuntimePermissionActivity.this, permission)
+        final String requestedPermission = getIntent().getStringExtra(REQUESTED_PERMISSION);
+        if (ContextCompat.checkSelfPermission(RuntimePermissionActivity.this, requestedPermission)
                 != PackageManager.PERMISSION_GRANTED) {
-            if (ActivityCompat.shouldShowRequestPermissionRationale(RuntimePermissionActivity.this, permission)) {
-                showPermissionRationaleDialog("Test", permission);
+
+            if (ActivityCompat.shouldShowRequestPermissionRationale(
+                    RuntimePermissionActivity.this, requestedPermission)) {
+
+                showPermissionRationaleDialog(
+                        getString(R.string.squarecamera__request_write_storage_permission_text),
+                        requestedPermission);
+
             } else {
-                requestForPermission(permission);
+                requestForPermission(requestedPermission);
             }
+
         } else {
             sendResult(true);
         }
@@ -99,6 +87,18 @@ public class RuntimePermissionActivity extends AppCompatActivity {
                 .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
+                        RuntimePermissionActivity.this.sendResult(false);
+                    }
+                })
+                .setOnCancelListener(new DialogInterface.OnCancelListener() {
+                    @Override
+                    public void onCancel(DialogInterface dialog) {
+                        RuntimePermissionActivity.this.sendResult(false);
+                    }
+                })
+                .setOnDismissListener(new DialogInterface.OnDismissListener() {
+                    @Override
+                    public void onDismiss(DialogInterface dialog) {
                         RuntimePermissionActivity.this.sendResult(false);
                     }
                 })

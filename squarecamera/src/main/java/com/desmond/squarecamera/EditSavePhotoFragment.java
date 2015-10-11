@@ -1,6 +1,7 @@
 package com.desmond.squarecamera;
 
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.res.Configuration;
@@ -27,6 +28,8 @@ public class EditSavePhotoFragment extends Fragment {
     public static final String BITMAP_KEY = "bitmap_byte_array";
     public static final String ROTATION_KEY = "rotation";
     public static final String IMAGE_INFO = "image_info";
+
+    private static final int REQUEST_STORAGE = 1;
 
     public static Fragment newInstance(byte[] bitmapByteArray, int rotation,
                                        @NonNull ImageParameters parameters) {
@@ -107,14 +110,16 @@ public class EditSavePhotoFragment extends Fragment {
     }
 
     private void requestForPermission() {
-        RuntimePermissionActivity.startActivity(getActivity(), 1, RuntimePermissionActivity.Permission.WRITE_EXTERNAL_STORAGE);
+        RuntimePermissionActivity.startActivity(getActivity(),
+                REQUEST_STORAGE,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE);
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (Activity.RESULT_OK != resultCode) return;
 
-        if (requestCode == 1 && data != null) {
+        if (REQUEST_STORAGE == requestCode && data != null) {
             final boolean isGranted = data.getBooleanExtra(RuntimePermissionActivity.REQUESTED_PERMISSION, false);
             final View view = getView();
             if (isGranted && view != null) {

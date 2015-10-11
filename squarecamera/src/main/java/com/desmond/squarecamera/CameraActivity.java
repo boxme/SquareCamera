@@ -45,9 +45,4 @@ public class CameraActivity extends AppCompatActivity {
     public void onCancel(View view) {
         getSupportFragmentManager().popBackStack();
     }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-    }
 }

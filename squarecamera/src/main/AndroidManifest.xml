@@ -5,7 +5,6 @@
     <application android:theme="@style/squarecamera__CameraFullScreenTheme" >
         <activity
             android:name=".RuntimePermissionActivity"
-            android:label="@string/title_activity_runtime_permission"
             android:theme="@style/squarecamera__CameraFullScreenTheme.NoUI" >
         </activity>
     </application>
