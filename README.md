@@ -9,6 +9,7 @@ Android module that takes a square photo using the native Android Camera APIs. T
 - Front & Back camera
 - Flash mode (Saved when the user exits)
 - Supports both portrait & landscape
+- Runtime permission is supported for saving/viewing photos
 
 ## SDK Support
 Support from SDK version 14 onwards
@@ -28,6 +29,22 @@ dependencies {
 ## Example
 ```
 private static final int REQUEST_CAMERA = 0;
+
+// Check for camera permission in MashMallow
+public void requestForCameraPermission(View view) {
+    final String permission = Manifest.permission.CAMERA;
+    if (ContextCompat.checkSelfPermission(MainActivity.this, permission)
+            != PackageManager.PERMISSION_GRANTED) {
+        if (ActivityCompat.shouldShowRequestPermissionRationale(MainActivity.this, permission)) {
+            // Show permission rationale
+        } else {
+            // Handle the result in Activity#onRequestPermissionResult(int, String[], int[])
+            ActivityCompat.requestPermissions(YourActivity.this, new String[]{permission}, REQUEST_CAMERA_PERMISSION);
+        }
+    } else {
+        // Start CameraActivity
+    }
+}
 
 // Start CameraActivity
 Intent startCustomCameraIntent = new Intent(this, CameraActivity.class);
