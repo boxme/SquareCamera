@@ -22,7 +22,7 @@ repositories {
 }
 
 dependencies {
-    compile 'com.github.boxme:squarecamera:1.0.4'
+    compile 'com.github.boxme:squarecamera:1.1.0'
 }
 ```
 
