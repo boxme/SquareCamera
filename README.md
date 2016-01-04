@@ -16,7 +16,7 @@ Support from SDK version 14 onwards
 
 ## Download
 jCenter:
-```
+```groovy
 repositories {
     jcenter()
 }
@@ -27,7 +27,7 @@ dependencies {
 ```
 
 ## Example
-```
+```java
 private static final int REQUEST_CAMERA = 0;
 
 // Check for camera permission in MashMallow
